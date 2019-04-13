@@ -21,7 +21,6 @@
 #include "thread_wrapper.h"
 
 UA_Server *server;
-UA_ServerConfig *config;
 UA_Boolean running;
 THREAD_HANDLE server_thread;
 
@@ -45,8 +44,8 @@ THREAD_CALLBACK(serverloop) {
 static void setup(void) {
     UA_DataValue_init(&lastValue);
     running = true;
-    config = UA_ServerConfig_new_default();
-    server = UA_Server_new(config);
+    server = UA_Server_new();
+    UA_ServerConfig_setDefault(UA_Server_getConfig(server));
     UA_Server_run_startup(server);
     THREAD_CREATE(server_thread, serverloop);
 
@@ -119,7 +118,6 @@ static void teardown(void) {
     THREAD_JOIN(server_thread);
     UA_Server_run_shutdown(server);
     UA_Server_delete(server);
-    UA_ServerConfig_delete(config);
     UA_DataValue_deleteMembers(&lastValue);
 }
 

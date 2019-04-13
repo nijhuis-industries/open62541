@@ -23,7 +23,6 @@
 #include "thread_wrapper.h"
 
 UA_Server *server;
-UA_ServerConfig *config;
 UA_Boolean running;
 UA_ServerNetworkLayer nl;
 THREAD_HANDLE server_thread;
@@ -62,14 +61,15 @@ static void setup(void) {
     UA_ByteString *revocationList = NULL;
     size_t revocationListSize = 0;
 
-    config = UA_ServerConfig_new_basic256sha256(4840, &certificate, &privateKey,
-                                                trustList, trustListSize,
-                                                revocationList, revocationListSize);
+    server = UA_Server_new();
+    UA_ServerConfig_setDefaultWithSecurityPolicies(UA_Server_getConfig(server),
+                                                   4840, &certificate, &privateKey,
+                                                   trustList, trustListSize,
+                                                   revocationList, revocationListSize);
 
     for(size_t i = 0; i < trustListSize; i++)
         UA_ByteString_deleteMembers(&trustList[i]);
 
-    server = UA_Server_new(config);
     UA_Server_run_startup(server);
     THREAD_CREATE(server_thread, serverloop);
 }
@@ -79,7 +79,6 @@ static void teardown(void) {
     THREAD_JOIN(server_thread);
     UA_Server_run_shutdown(server);
     UA_Server_delete(server);
-    UA_ServerConfig_delete(config);
 }
 
 START_TEST(encryption_connect) {
