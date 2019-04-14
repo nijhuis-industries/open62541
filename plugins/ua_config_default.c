@@ -13,7 +13,6 @@
 #include <open62541/client_config_default.h>
 #include <open62541/plugin/accesscontrol_default.h>
 #include <open62541/plugin/log_stdout.h>
-#include <open62541/plugin/nodestore_default.h>
 #include <open62541/plugin/pki_default.h>
 #include <open62541/plugin/securitypolicy_default.h>
 #include <open62541/server_config_default.h>
@@ -438,12 +437,6 @@ UA_ServerConfig_new_basic256sha256(UA_UInt16 portNumber,
         UA_CertificateVerification_Trustlist(&conf->certificateVerification,
                                              trustList, trustListSize,
                                              revocationList, revocationListSize);
-    if(retval != UA_STATUSCODE_GOOD) {
-        UA_ServerConfig_delete(conf);
-        return NULL;
-    }
-
-    retval = UA_Nodestore_default_new(&conf->nodestore);
     if(retval != UA_STATUSCODE_GOOD) {
         UA_ServerConfig_delete(conf);
         return NULL;
