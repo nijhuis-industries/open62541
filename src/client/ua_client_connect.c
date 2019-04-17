@@ -125,7 +125,7 @@ HelAckHandshake(UA_Client *client, const UA_String endpointUrl) {
 
     /* Send the HEL message */
     message.length = messageHeader.messageSize;
-    retval = conn->send(conn, &message);
+    retval = (conn->send)(conn, &message);
     if(retval != UA_STATUSCODE_GOOD) {
         UA_LOG_ERROR(&client->config.logger, UA_LOGCATEGORY_NETWORK,
                      "Sending HEL failed");
@@ -1104,7 +1104,7 @@ UA_Client_disconnect(UA_Client *client) {
             && client->connection.state != UA_CONNECTION_OPENING)
         /* UA_ClientConnectionTCP_init sets initial state to opening */
         if(client->connection.close != NULL)
-            client->connection.close(&client->connection);
+            (client->connection.close)(&client->connection);
 
 #ifdef UA_ENABLE_SUBSCRIPTIONS
     // TODO REMOVE WHEN UA_SESSION_RECOVERY IS READY

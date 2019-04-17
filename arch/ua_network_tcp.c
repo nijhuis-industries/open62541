@@ -67,7 +67,7 @@ connection_write(UA_Connection *connection, UA_ByteString *buf) {
                      (const char*)buf->data + nWritten,
                      bytes_to_send, flags);
             if(n < 0 && UA_ERRNO != UA_INTERRUPTED && UA_ERRNO != UA_AGAIN) {
-                connection->close(connection);
+                (connection->close)(connection);
                 UA_ByteString_deleteMembers(buf);
                 return UA_STATUSCODE_BADCONNECTIONCLOSED;
             }
@@ -108,7 +108,7 @@ connection_recv(UA_Connection *connection, UA_ByteString *response,
                 return UA_STATUSCODE_GOODNONCRITICALTIMEOUT;
 
             /* The error cannot be recovered. Close the connection. */
-            connection->close(connection);
+            (connection->close)(connection);
             return UA_STATUSCODE_BADCONNECTIONCLOSED;
         }
     }
@@ -129,7 +129,7 @@ connection_recv(UA_Connection *connection, UA_ByteString *response,
     /* The remote side closed the connection */
     if(ret == 0) {
         UA_ByteString_deleteMembers(response);
-        connection->close(connection);
+        (connection->close)(connection);
         return UA_STATUSCODE_BADCONNECTIONCLOSED;
     }
 
@@ -139,7 +139,7 @@ connection_recv(UA_Connection *connection, UA_ByteString *response,
         if(UA_ERRNO == UA_INTERRUPTED || (timeout > 0) ?
            false : (UA_ERRNO == UA_EAGAIN || UA_ERRNO == UA_WOULDBLOCK))
             return UA_STATUSCODE_GOOD; /* statuscode_good but no data -> retry */
-        connection->close(connection);
+        (connection->close)(connection);
         return UA_STATUSCODE_BADCONNECTIONCLOSED;
     }
 

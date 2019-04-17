@@ -90,7 +90,7 @@ UA_Connection_sendError(UA_Connection *connection, UA_TcpErrorMessage *error) {
     UA_TcpMessageHeader_encodeBinary(&header, &bufPos, bufEnd);
     UA_TcpErrorMessage_encodeBinary(error, &bufPos, bufEnd);
     msg.length = header.messageSize;
-    connection->send(connection, &msg);
+    (connection->send)(connection, &msg);
 }
 
 static UA_StatusCode
@@ -236,7 +236,7 @@ UA_Connection_receiveChunksBlocking(UA_Connection *connection, void *application
     while(true) {
         /* Listen for messages to arrive */
         UA_ByteString packet = UA_BYTESTRING_NULL;
-        retval = connection->recv(connection, &packet, timeout);
+        retval = (connection->recv)(connection, &packet, timeout);
         if(retval != UA_STATUSCODE_GOOD)
             break;
 
@@ -272,7 +272,7 @@ UA_Connection_receiveChunksNonBlocking(UA_Connection *connection, void *applicat
 
     /* Listen for messages to arrive */
     UA_ByteString packet = UA_BYTESTRING_NULL;
-    UA_StatusCode retval = connection->recv(connection, &packet, 1);
+    UA_StatusCode retval = (connection->recv)(connection, &packet, 1);
 
     if((retval != UA_STATUSCODE_GOOD) && (retval != UA_STATUSCODE_GOODNONCRITICALTIMEOUT))
         return retval;

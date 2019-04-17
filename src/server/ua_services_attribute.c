@@ -144,7 +144,7 @@ readValueAttributeFromDataSource(UA_Server *server, UA_Session *session,
         return UA_STATUSCODE_BADINTERNALERROR;
     UA_Boolean sourceTimeStamp = (timestamps == UA_TIMESTAMPSTORETURN_SOURCE ||
                                   timestamps == UA_TIMESTAMPSTORETURN_BOTH);
-    return vn->value.dataSource.read(server, &session->sessionId, session->sessionHandle,
+    return (vn->value.dataSource.read)(server, &session->sessionId, session->sessionHandle,
                                      &vn->nodeId, vn->context, sourceTimeStamp, rangeptr, v);
 }
 
@@ -1129,7 +1129,7 @@ writeValueAttribute(UA_Server *server, UA_Session *session,
                                               &adjustedValue);
     } else {
         if(node->value.dataSource.write) {
-            retval = node->value.dataSource.write(server, &session->sessionId,
+            retval = (node->value.dataSource.write)(server, &session->sessionId,
                                                   session->sessionHandle, &node->nodeId,
                                                   node->context, rangeptr, &adjustedValue);
         } else {

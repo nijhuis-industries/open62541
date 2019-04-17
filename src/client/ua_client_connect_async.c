@@ -116,7 +116,7 @@ sendHELMessage(UA_Client *client) {
 
     /* Send the HEL message */
     message.length = messageHeader.messageSize;
-    retval = conn->send (conn, &message);
+    retval = (conn->send)(conn, &message);
 
     if(retval == UA_STATUSCODE_GOOD) {
         UA_LOG_DEBUG(&client->config.logger, UA_LOGCATEGORY_NETWORK, "Sent HEL message");
@@ -556,8 +556,8 @@ UA_Client_connect_iterate(UA_Client *client) {
             if(client->connectStatus == UA_STATUSCODE_GOOD) {
                 setClientState(client, UA_CLIENTSTATE_WAITING_FOR_ACK);
             } else {
-                client->connection.close(&client->connection);
-                client->connection.free(&client->connection);
+                (client->connection.close)(&client->connection);
+                (client->connection.free)(&client->connection);
             }
             return client->connectStatus;
         }
@@ -571,8 +571,8 @@ UA_Client_connect_iterate(UA_Client *client) {
     }
 
     if(client->connectStatus != UA_STATUSCODE_GOOD) {
-        client->connection.close(&client->connection);
-        client->connection.free(&client->connection);
+        (client->connection.close)(&client->connection);
+        (client->connection.free)(&client->connection);
     }
 
     return client->connectStatus;
@@ -716,7 +716,7 @@ UA_Client_disconnect_async(UA_Client *client, UA_UInt32 *requestId) {
     /* Close the TCP connection
      * shutdown and close (in tcp.c) are already async*/
     if (client->state >= UA_CLIENTSTATE_CONNECTED)
-        client->connection.close(&client->connection);
+        (client->connection.close)(&client->connection);
     else
         UA_Client_removeRepeatedCallback(client, client->connection.connectCallbackID);
 

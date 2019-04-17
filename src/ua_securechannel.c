@@ -154,7 +154,7 @@ UA_SecureChannel_close(UA_SecureChannel *channel) {
     /* Detach from the connection and close the connection */
     if(channel->connection) {
         if(channel->connection->state != UA_CONNECTION_CLOSED)
-            channel->connection->close(channel->connection);
+            (channel->connection->close)(channel->connection);
         UA_Connection_detachSecureChannel(channel->connection);
     }
 
@@ -570,7 +570,7 @@ UA_SecureChannel_sendAsymmetricOPNMessage(UA_SecureChannel *channel,
 
     /* Send the message, the buffer is freed in the network layer */
     buf.length = finalLength;
-    retval = connection->send(connection, &buf);
+    retval = (connection->send)(connection, &buf);
 #ifdef UA_ENABLE_UNIT_TEST_FAILURE_HOOKS
     retval |= sendAsym_sendFailure;
 #endif
@@ -816,7 +816,7 @@ sendSymmetricChunk(UA_MessageContext *messageContext) {
 #endif
 
     /* Send the chunk, the buffer is freed in the network layer */
-    return connection->send(channel->connection, &messageContext->messageBuffer);
+    return (connection->send)(channel->connection, &messageContext->messageBuffer);
 
 error:
     connection->releaseSendBuffer(channel->connection, &messageContext->messageBuffer);

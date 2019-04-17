@@ -476,7 +476,7 @@ UA_Server_run_iterate(UA_Server *server, UA_Boolean waitInternal) {
     /* Listen on the networklayer */
     for(size_t i = 0; i < server->config.networkLayersSize; ++i) {
         UA_ServerNetworkLayer *nl = &server->config.networkLayers[i];
-        nl->listen(nl, server, timeout);
+        (nl->listen)(nl, server, timeout);
     }
 
 #if defined(UA_ENABLE_DISCOVERY_MULTICAST) && !defined(UA_ENABLE_MULTITHREADING)

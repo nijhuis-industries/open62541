@@ -338,7 +338,7 @@ processHEL(UA_Server *server, UA_Connection *connection,
         return retval;
     }
     ack_msg.length = ackHeader.messageSize;
-    return connection->send(connection, &ack_msg);
+    return (connection->send)(connection, &ack_msg);
 }
 
 /* OPN -> Open up/renew the securechannel */
@@ -792,7 +792,7 @@ UA_Server_processBinaryMessage(UA_Server *server, UA_Connection *connection,
         error.error = retval;
         error.reason = UA_STRING_NULL;
         UA_Connection_sendError(connection, &error);
-        connection->close(connection);
+        (connection->close)(connection);
         return;
     }
 
